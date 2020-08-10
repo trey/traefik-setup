@@ -22,9 +22,11 @@ The bulk of the information on Traefik is from this tutorial:
 
 ---
 
-_Every command in these instructions should be run from the Droplet’s command line._
+_Unless otherwise noted, every command in these instructions should be run from the Droplet’s command line._
 
 ## Initial setup
+
+Start with a [Docker Droplet](https://marketplace.digitalocean.com/apps/docker) and have followed [these instructions](https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-18-04) including creating a non-root user account.
 
 ### Set Up a (Sub-)Domain to Use as a Traefik a Dashboard
 
@@ -97,16 +99,59 @@ Now you should be able to go to your Traefik dashboard’s domain and log in wit
 
 ## Set up Supervisor to Restart Traefik as Needed
 
-…
+- [Set up Supervisor.](https://www.digitalocean.com/community/tutorials/how-to-install-and-manage-supervisor-on-ubuntu-and-debian-vps)
+- …
 
 ---
 
 ## Set Up a New Site
 
+- …
+<!-- TODO
 - Add all the stuff from Bear "Set up a new Docker/Traefik site"
 - ~/apps
 - ~/repos
+ -->
 
 ### Automatic Deployments with Git
 
+Set up a new, empty git repository.
+
+```
+mkdir ~/repos/[new-project].git
+cd !$
+git init --bare --initial-branch=main
+```
+
+Set up a post-receive hook for it. Create [a file](example-site/post-receive-hook.sh) in the `hooks/` folder called `post-receive` (also put this file in your `scripts/` folder for safe keeping).
+
+Then make the file executable with  `chmod +x post-receive`.
+
+On your Mac, connect the local repo to the one on DigitalOcean.
+
+```
+git remote add digitalocean ssh://trey@[IP address]/home/trey/repos/[new-project].git
+```
+
 ### Set Up the New Site with Supervisor to Restart as Needed
+
+1. Add example-site files where they need to go.
+2. Run these commands to make the changes take effect:
+
+```shell
+# Look for changes.
+supervisorctl reread
+
+# Run the changes.
+supervisorctl update
+```
+
+You can check on running items:
+
+```shell
+sudo supervisorctl
+
+supervisor> status
+supervisor> stop [program_name]
+supervisor> restart [program_name]
+```
