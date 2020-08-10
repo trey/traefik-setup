@@ -113,6 +113,8 @@ Now you should be able to go to your Traefik dashboard’s domain and log in wit
 - ~/repos
  -->
 
+Log into your domain registrar and set up an **A record** to point to the IP address of the Droplet.
+
 ### Automatic Deployments with Git
 
 Set up a new, empty git repository.
