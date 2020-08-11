@@ -8,23 +8,35 @@ The bulk of the information on Traefik is from this tutorial:
 
 ---
 
+## Table of Contents
+
+1. [Initial Setup](#initial-setup)
+    1. [Set Up a (Sub-)Domain to Use as a Traefik a Dashboard](#set-up-a-sub-domain-to-use-as-a-traefik-a-dashboard)
+    1. [Create an Encrypted Password to Access Traefik’s Dashboard](#create-an-encrypted-password-to-access-trafiks-dashboard)
+    1. [Set Up a Network in Docker and a File for Let’s Encrypt](#set-up-a-network-in-docker-and-a-file-for-let’s-encrypt)
+    1. [Install and run Traefik](#install-and-run-traefik)
+1. [Set up Supervisor to Restart Traefik as Needed](#set-up-supervisor-to-restart-traefik-as-needed)
+1. [Set Up a New Site](#set-up-a-new-site)
+
+---
+
 ## File Index:
 
-| File                                                        | Location on Server                               |
-| ----------------------------------------------------------- | ------------------------------------------------ |
-| [`traefik.toml`](traefik/traefik.toml)                      | `~/traefik.toml`                                 |
-| [`traefik.sh`](traefik/traefik.sh)                          | `/usr/local/bin/traefik.sh`                      |
-| [`traefik.conf`](traefik/traefik.conf)                      | `/etc/supervisor/conf.d/traefik.conf`            |
-| ---                                                         | ---                                              |
-| [`example_site.sh`](example-site/example_site.sh)           | `/usr/local/bin/example-site.sh`                 |
-| [`example_site.conf`](example-site/example_site.conf)       | `/etc/supervisor/conf.d/example-site.conf`       |
-| [`post-receive-hook.sh`](example-site/post-receive-hook.sh) | `~/repos/example-project.git/hooks/post-receive` |
+| File                                                        | Location on Server                                 |
+| ----------------------------------------------------------- | -------------------------------------------------- |
+| [`traefik.toml`](traefik/traefik.toml)                      | `~/traefik.toml`                                   |
+| [`traefik.sh`](traefik/traefik.sh)                          | `/usr/local/bin/traefik.sh`                        |
+| [`traefik.conf`](traefik/traefik.conf)                      | `/etc/supervisor/conf.d/traefik.conf`              |
+| ---                                                         | ---                                                |
+| [`example_site.sh`](example-site/example_site.sh)           | `/usr/local/bin/[example-site].sh`                 |
+| [`example_site.conf`](example-site/example_site.conf)       | `/etc/supervisor/conf.d/[example-site].conf`       |
+| [`post-receive-hook.sh`](example-site/post-receive-hook.sh) | `~/repos/[example-project].git/hooks/post-receive` |
 
 ---
 
 _Unless otherwise noted, every command in these instructions should be run from the Droplet’s command line._
 
-## Initial setup
+## Initial Setup
 
 Start with a [Docker Droplet](https://marketplace.digitalocean.com/apps/docker) and have followed [these instructions](https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-18-04) including creating a non-root user account.
 
@@ -32,7 +44,7 @@ Start with a [Docker Droplet](https://marketplace.digitalocean.com/apps/docker) 
 
 Log into your domain registrar and set up an **A record** to point to the IP address of the Droplet.
 
-### Create an Encrypted Password to Access Trafik’s Dashboard
+### Create an Encrypted Password to Access Traefik’s Dashboard
 
 Don’t skip this step. At first, I thought this was something you could just create in 1Password be done. However, you don’t use the password itself in the Traefik configuration file, you use the encrypted version of it. By all means, generate and store the actual password in 1Password, but you need this utility to generate the encrypted version of that password.
 
@@ -54,7 +66,7 @@ admin:your_encrypted_password
 
 Copy [`traefik.toml`](traefik/traefik.toml) to your user folder on DigitalOcean and replace `your_encrypted_password` with your actual encrypted password.
 
-### Get Things Ready for Traefik
+### Set Up a Network in Docker and a File for Let’s Encrypt
 
 Create a shared network for all the Docker-powered sites to use:
 
@@ -99,8 +111,18 @@ Now you should be able to go to your Traefik dashboard’s domain and log in wit
 
 ## Set up Supervisor to Restart Traefik as Needed
 
-- [Set up Supervisor.](https://www.digitalocean.com/community/tutorials/how-to-install-and-manage-supervisor-on-ubuntu-and-debian-vps)
-- …
+This makes sure if the server restarts or the Traefik app stops running for some reason, it'll be restarted automatically.
+
+1. [Set up Supervisor:](https://www.digitalocean.com/community/tutorials/how-to-install-and-manage-supervisor-on-ubuntu-and-debian-vps)
+
+```shell
+apt-get install supervisor
+service supervisor restart
+```
+
+2. Copy [`traefik.conf`](traefik/traefik.conf) to `/etc/supervisor/conf.d/traefik.conf`.
+
+3. Copy [`traefik.sh`](traefik/traefik.sh) to `/usr/local/bin/traefik.sh`
 
 ---
 
