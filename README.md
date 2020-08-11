@@ -17,6 +17,8 @@ The bulk of the information on Traefik is from this tutorial:
     1. [Install and run Traefik](#install-and-run-traefik)
 1. [Set up Supervisor to Restart Traefik as Needed](#set-up-supervisor-to-restart-traefik-as-needed)
 1. [Set Up a New Site](#set-up-a-new-site)
+    1. [Automatic Deployments with Git](#automatic-deployments-with-git)
+    1. [Set Up the New Site with Supervisor to Restart as Needed](#set-up-the-new-site-with-supervisor-to-restart-as-needed)
 
 ---
 
@@ -121,8 +123,18 @@ service supervisor restart
 ```
 
 2. Copy [`traefik.conf`](traefik/traefik.conf) to `/etc/supervisor/conf.d/traefik.conf`.
-
 3. Copy [`traefik.sh`](traefik/traefik.sh) to `/usr/local/bin/traefik.sh`
+4. Tell Supervisor to look for the new changes and load them.
+
+```shell
+```shell
+# Look for changes.
+sudo supervisorctl reread
+
+# Run the changes.
+sudo supervisorctl update
+```
+```
 
 ---
 
@@ -139,21 +151,19 @@ Log into your domain registrar and set up an **A record** to point to the IP add
 
 ### Automatic Deployments with Git
 
-Set up a new, empty git repository.
+1. Set up a new, empty git repository.
 
-```
+```shell
 mkdir ~/repos/[new-project].git
 cd !$
 git init --bare --initial-branch=main
 ```
 
-Set up a post-receive hook for it. Create [a file](example-site/post-receive-hook.sh) in the `hooks/` folder called `post-receive` (also put this file in your `scripts/` folder for safe keeping).
+2. Set up a post-receive hook for it. Create [a file](example-site/post-receive-hook.sh) in the `hooks/` folder called `post-receive` (also put this file in your `scripts/` folder for safe keeping).
+3. Then make the file executable with  `chmod +x post-receive`.
+4. On your Mac, connect the local repo to the one on DigitalOcean.
 
-Then make the file executable with  `chmod +x post-receive`.
-
-On your Mac, connect the local repo to the one on DigitalOcean.
-
-```
+```shell
 git remote add digitalocean ssh://trey@[IP address]/home/trey/repos/[new-project].git
 ```
 
@@ -164,10 +174,10 @@ git remote add digitalocean ssh://trey@[IP address]/home/trey/repos/[new-project
 
 ```shell
 # Look for changes.
-supervisorctl reread
+sudo supervisorctl reread
 
 # Run the changes.
-supervisorctl update
+sudo supervisorctl update
 ```
 
 You can check on running items:
