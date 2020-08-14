@@ -17,8 +17,8 @@ The bulk of the information on Traefik is from this tutorial:
     1. [Install and run Traefik](#install-and-run-traefik)
 1. [Set up Supervisor to Restart Traefik as Needed](#set-up-supervisor-to-restart-traefik-as-needed)
 1. [Set Up a New Site](#set-up-a-new-site)
-    1. [Configure Docker to Play Nice with Traefik](#configure-docker-to-play-nice-with-traefik)
     1. [Set Up a (Sub-)Domain for A New Site](#set-up-a-sub-domain-for-a-new-site)
+    1. [Configure Docker to Play Nice with Traefik](#configure-docker-to-play-nice-with-traefik)
     1. [Automatic Deployments with Git](#automatic-deployments-with-git)
     1. [Set Up the New Site with Supervisor to Restart as Needed](#set-up-the-new-site-with-supervisor-to-restart-as-needed)
 
@@ -152,17 +152,17 @@ supervisor> restart [program_name]
 
 Note: sites/apps live in `~/apps` and their corresponding repos live in `~/repos`.
 
+### Set Up a (Sub-)Domain for A New Site
+
+Log into your domain registrar and set up an **A record** to point to the IP address of the Droplet.
+
 ### Configure Docker to Play Nice with Traefik
 
 Review the example [`docker-compose.yml`](example-site/docker-compose.yml).
 
 Note that every new site will need a unique `traefik.port`.
 
-- [ ] Flesh this section out.
-
-### Set Up a (Sub-)Domain for A New Site
-
-Log into your domain registrar and set up an **A record** to point to the IP address of the Droplet.
+- [ ] Flesh this section out. Port stuff feels just a _little_ too magical.
 
 ### Set Up Automatic Deployments with Git
 
@@ -182,11 +182,25 @@ git init --bare --initial-branch=main
 git remote add digitalocean ssh://trey@[IP address]/home/trey/repos/[new-project].git
 ```
 
+Once you push to the new remote for the first time, it should create the new folder in `~/apps` and you’ll almost be ready to go.
+
+### Start It Up
+
+```
+cd ~/apps/[new-project]
+
+docker-compose up -d --build
+```
+
+The site should work now. 🎉
+
 ### Set Up the New Site with Supervisor to Restart as Needed
 
 1. Copy [`example_site.conf`](example-site/example_site.conf) to `/etc/supervisor/conf.d/[example_site].conf`.
 2. Copy [`example_site.sh`](example-site/example_site.sh) to `/usr/local/bin/[example_site].sh`
 3. Tell Supervisor to look for the new changes and load them.
+
+[See also.](#set-up-supervisor-to-restart-traefik-as-needed)
 
 ```shell
 # Look for changes.
