@@ -120,8 +120,8 @@ This makes sure if the server restarts or the Traefik app stops running for some
 1. [Set up Supervisor:](https://www.digitalocean.com/community/tutorials/how-to-install-and-manage-supervisor-on-ubuntu-and-debian-vps)
 
 ```shell
-apt-get install supervisor
-service supervisor restart
+sudo apt-get install supervisor
+sudo service supervisor restart
 ```
 
 2. Copy [`traefik.conf`](traefik/traefik.conf) to `/etc/supervisor/conf.d/traefik.conf`.
@@ -144,6 +144,7 @@ sudo supervisorctl
 supervisor> status
 supervisor> stop [program_name]
 supervisor> restart [program_name]
+supervisor> quit
 ```
 
 ---
