@@ -165,11 +165,12 @@ Note that every new site will need a unique `traefik.port`.
 
 - [ ] Flesh this section out. Port stuff feels just a _little_ too magical.
 
-### Set Up Automatic Deployments with Git
+### Create Folders and Set Up Automatic Deployments with Git
 
-1. Set up a new, empty git repository.
+1. Set up folders and a new, empty git repository.
 
 ```shell
+mkdir ~/apps/[new-project]
 mkdir ~/repos/[new-project].git
 cd !$
 git init --bare --initial-branch=main
