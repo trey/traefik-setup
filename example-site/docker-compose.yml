@@ -2,10 +2,7 @@ version: '3.7'
 
 # Note:
 # This is just the latest version of a docker-compose.yml file I’ve done as of
-# 2020-08-11. Update this when I learn better!
-#
-# You don’t want to actually run a production site exactly like this (at least
-# with regards to the `command` using `runserver` like you would on your Mac).
+# 2020-09-08. Update this when I learn better!
 
 networks:
   web:
@@ -16,7 +13,7 @@ networks:
 services:
   web:
     build: .
-    command: python /code/manage.py runserver 0.0.0.0:8001
+    command: gunicorn example_project.wsgi -b 0.0.0.0:8001
     volumes:
       - .:/code
     ports:
@@ -27,8 +24,8 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     labels:
-      - traefik.backend=postgres-example_web_1
-      - traefik.frontend.rule=Host:postgres.example.com
+      - traefik.backend=example_web_1
+      - traefik.frontend.rule=Host:subdomain.example.com
       - traefik.docker.network=web
       - traefik.port=8001
     networks:

@@ -19,7 +19,9 @@ The bulk of the information on Traefik is from this tutorial:
 1. [Set Up a New Site](#set-up-a-new-site)
     1. [Set Up a (Sub-)Domain for A New Site](#set-up-a-sub-domain-for-a-new-site)
     1. [Configure Docker to Play Nice with Traefik](#configure-docker-to-play-nice-with-traefik)
-    1. [Automatic Deployments with Git](#automatic-deployments-with-git)
+    1. [Set up Git to Be Able to Deploy Automatically](#set-up-git-to-be-able-to-deploy-automatically)
+    1. [Start It Up](#start-it-up)
+    1. [Set up Git to Deploy on Push](#set-up-git-to-deploy-on-push)
     1. [Set Up the New Site with Supervisor to Restart as Needed](#set-up-the-new-site-with-supervisor-to-restart-as-needed)
 
 ---
@@ -165,7 +167,7 @@ Note that every new site will need a unique `traefik.port`.
 
 - [ ] Flesh this section out. Port stuff feels just a _little_ too magical.
 
-### Create Folders and Set Up Automatic Deployments with Git
+### Set up Git to Be Able to Deploy Automatically
 
 1. Set up folders and a new, empty git repository.
 
@@ -176,15 +178,17 @@ cd !$
 git init --bare --initial-branch=main
 ```
 
-2. Set up a post-receive hook for it. Create [a file](example-site/post-receive-hook.sh) in the `hooks/` folder called `post-receive` (also put this file in your `scripts/` folder for safe keeping).
-3. Then make the file executable with  `chmod +x post-receive`.
-4. On your Mac, connect the local repo to the one on DigitalOcean.
+(Obviously, only set the initial branch to `main` if that’s how your repo is set up.)
+
+2. On your Mac, connect the local repo to the one on DigitalOcean.
 
 ```shell
 git remote add digitalocean ssh://trey@[IP address]/home/trey/repos/[new-project].git
 ```
 
-Once you push to the new remote for the first time, it should create the new folder in `~/apps` and you’ll almost be ready to go.
+3. Set up a post-receive hook. Create [a barebones file](example-site/post-receive-hook-first.sh) in the `~/repos/[new-project]/hooks/` folder called `post-receive` This version of the file is just to get things in place and try them out. [We’ll update it shortly.](#set-up-git-to-deploy-on-push)
+4. Make the file executable with  `chmod +x post-receive`.
+5. Run `git push digitalocean main` (or whatever branch you want) to get the code onto the server.
 
 ### Start It Up
 
@@ -194,9 +198,19 @@ cd ~/apps/[new-project]
 docker-compose up -d --build
 ```
 
-The site should work now. 🎉
+The site should work now. 🎉 If not, once you figure out what else needs to happen, we’ll configure it to happen automatically the next time you do a `git push`.
+
+### Set up Git to Deploy on Push
+
+Now that you know that the site runs and have figured out any peculiarities with it, you can take that knowledge and make it happen whenever you do a `git push`.
+
+Update the post-receive hook for your repository with the stuff in [this updated example](example-site/post-receive-hook.sh) as well as anything else you’ve learned. Then put this file in your `scripts/` folder for safe keeping.
+
+Now when you `git push digitalocean`, all the things needed to update and restart your app will happen automatically.
 
 ### Set Up the New Site with Supervisor to Restart as Needed
+
+To make sure the app comes back to life in the event it stops running or the server reboots, set it up with Supervisor.
 
 1. Copy [`example_site.conf`](example-site/example_site.conf) to `/etc/supervisor/conf.d/[example_site].conf`.
 2. Copy [`example_site.sh`](example-site/example_site.sh) to `/usr/local/bin/[example_site].sh`
