@@ -212,11 +212,17 @@ Now when you `git push digitalocean`, all the things needed to update and restar
 
 To make sure the app comes back to life in the event it stops running or the server reboots, set it up with Supervisor.
 
-1. Copy [`example_site.conf`](example-site/example_site.conf) to `/etc/supervisor/conf.d/[example_site].conf`.
-2. Copy [`example_site.sh`](example-site/example_site.sh) to `/usr/local/bin/[example_site].sh`
-3. Tell Supervisor to look for the new changes and load them.
+1. Copy [`example_site.conf`](example-site/example_site.conf) to your `scripts/` folder and rename it.
+2. Copy [`example_site.sh`](example-site/example_site.sh) to your `scripts/` folder and rename it.
+3. Copy the files to where they need to live on the server.
 
-[See also.](#set-up-supervisor-to-restart-traefik-as-needed)
+```shell
+sudo cp [your .conf file] /etc/supervisor/conf.d/
+sudo cp [your .sh file] /usr/local/bin/
+sudo chmod +x /usr/local/bin/[your .sh file]
+```
+
+4. Tell Supervisor to look for the new changes and load them.
 
 ```shell
 # Look for changes.
@@ -225,3 +231,5 @@ sudo supervisorctl reread
 # Run the changes.
 sudo supervisorctl update
 ```
+
+[See also.](#set-up-supervisor-to-restart-traefik-as-needed)
