@@ -1,31 +1,24 @@
-defaultEntryPoints = ["http", "https"]
-
 [entryPoints]
-  [entryPoints.dashboard]
-    address = ":8080"
-    [entryPoints.dashboard.auth]
-      [entryPoints.dashboard.auth.basic]
-        users = ["admin:your_encrypted_password"]
-  [entryPoints.http]
+  [entryPoints.web]
     address = ":80"
-      [entryPoints.http.redirect]
-        entryPoint = "https"
-  [entryPoints.https]
+    [entryPoints.web.http.redirections.entryPoint]
+      to = "websecure"
+      scheme = "https"
+
+  [entryPoints.websecure]
     address = ":443"
-      [entryPoints.https.tls]
 
 [api]
-entrypoint="dashboard"
+  dashboard = true
 
-[acme]
-email = "boss@treylabs.com"
-storage = "acme.json"
-entryPoint = "https"
-onHostRule = true
-  [acme.httpChallenge]
-  entryPoint = "http"
+[certificatesResolvers.lets-encrypt.acme]
+  email = "boss@treylabs.com"
+  storage = "acme.json"
+  [certificatesResolvers.lets-encrypt.acme.tlsChallenge]
 
-[docker]
-domain = "treylabs.com"
-watch = true
-network = "web"
+[providers.docker]
+  watch = true
+  network = "web"
+
+[providers.file]
+  filename = "traefik_dynamic.toml"

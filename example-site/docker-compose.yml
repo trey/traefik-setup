@@ -11,7 +11,7 @@ networks:
     external: false
 
 services:
-  web:
+  app:
     build: .
     command: gunicorn example_project.wsgi -b 0.0.0.0:8001
     volumes:
@@ -24,9 +24,9 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     labels:
-      - traefik.backend=example_web_1
-      - traefik.frontend.rule=Host:subdomain.example.com
-      - traefik.docker.network=web
+      - traefik.http.routers.app.rule=Host(`app.example.com`)
+      - traefik.http.routers.app.tls=true
+      - traefik.http.routers.app.tls.certresolver=lets-encrypt
       - traefik.port=8001
     networks:
       - internal
