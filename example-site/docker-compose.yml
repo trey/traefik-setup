@@ -28,7 +28,8 @@ services:
       - traefik.http.routers.web.tls=true
       - traefik.http.routers.web.tls.certresolver=lets-encrypt
       - traefik.port=8001
-      - traefik.http.middlewares.testHeader.headers.customresponseheaders.Strict-Transport-Security=15552000
+      - traefik.http.routers.web.middlewares=hsts
+      - traefik.http.middlewares.hsts.headers.stsSeconds=15552000
     networks:
       - internal
       - web
