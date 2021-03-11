@@ -102,8 +102,6 @@ docker run -d \
   traefik:v2.2
 ```
 
-_I wish I knew why we can only use version 1.7.2. I tried using the latest at some point with no luck. This stuff feels enough like it’s held together with baling wire that I didn’t feel like pressing it. Maybe one day._
-
 Because we’re going to set up Supervisor, you probably won’t have to do this, but to start it back up manually:
 
 ```shell
