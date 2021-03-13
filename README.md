@@ -99,7 +99,7 @@ docker run -d \
   -p 443:443 \
   --network web \
   --name traefik \
-  traefik:v2.2
+  traefik:v2.4.7
 ```
 
 Because we’re going to set up Supervisor, you probably won’t have to do this, but to start it back up manually:
