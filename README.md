@@ -4,7 +4,7 @@ I had this information living in a few different places, and I don’t want to m
 
 The bulk of the information on Traefik is from this tutorial:
 
-[How To Use Traefik as a Reverse Proxy for Docker Containers on Ubuntu 18.04 | DigitalOcean](https://www.digitalocean.com/community/tutorials/how-to-use-traefik-as-a-reverse-proxy-for-docker-containers-on-ubuntu-18-04)
+[How To Use Traefik v2 as a Reverse Proxy for Docker Containers on Ubuntu 20.04 | DigitalOcean](https://www.digitalocean.com/community/tutorials/how-to-use-traefik-v2-as-a-reverse-proxy-for-docker-containers-on-ubuntu-20-04)
 
 ---
 
